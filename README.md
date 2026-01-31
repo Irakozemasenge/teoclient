@@ -1,75 +1,51 @@
-# React + TypeScript + Vite
+# y-Tech Hub - Youth Technology Hub
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Site web officiel pour Youth Technology Hub (y-Tech Hub), une société technologique basée à Bubanza, Burundi.
 
-Currently, two official plugins are available:
+## Fonctionnalités
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Page d'accueil interactive** : Animation d'introduction et navigation fluide.
+- **Services** : Présentation détaillée des 6 services principaux avec icônes.
+- **Formations** : Catalogue des formations disponibles (Web, Mobile, Marketing, Initiation) avec formulaire d'inscription intégré.
+- **À propos** : Mission et vision de l'entreprise.
+- **Contact** : Formulaire de contact et liens directs vers WhatsApp et appels téléphoniques.
+- **Responsive Design** : Adapté aux mobiles, tablettes et ordinateurs.
+- **Animations** : Utilisation de Framer Motion pour des transitions élégantes.
 
-## React Compiler
+## Technologies Utilisées
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+- React 18
+- TypeScript
+- Tailwind CSS
+- Framer Motion (Animations)
+- Lucide React (Icônes)
+- Vite
 
-Note: This will impact Vite dev & build performances.
+## Structure du Projet
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+├── components/
+│   ├── Navbar.tsx       # Barre de navigation responsive
+│   ├── Hero.tsx         # Section d'accueil avec animations
+│   ├── Services.tsx     # Grille des services
+│   ├── Training.tsx     # Section formations et formulaire d'inscription
+│   ├── About.tsx        # Section À propos
+│   ├── Contact.tsx      # Informations de contact et formulaire
+│   └── Footer.tsx       # Pied de page
+├── assets/
+│   └── logo.png         # Logo de y-Tech Hub
+├── App.tsx              # Composant principal
+└── index.css            # Styles globaux et animations personnalisées
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Commandes
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- `npm run dev` : Lancer le serveur de développement.
+- `npm run build` : Construire le projet pour la production.
+- `npm run preview` : Prévisualiser la version de production.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Contact
+
+- WhatsApp : +257 72 067 512
+- Appel : +257 68 671 477
