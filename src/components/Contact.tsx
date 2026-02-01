@@ -1,10 +1,58 @@
-import React from 'react';
+import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { motion } from 'framer-motion';
 import { Phone, MessageCircle, MapPin, Mail, Send } from 'lucide-react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-const Contact = () => {
+const Contact: React.FC = () => {
+  interface FormData {
+    nom: string;
+    email: string;
+    message: string;
+  }
+
+  const [formData, setFormData] = useState<FormData>({
+    nom: '',
+    email: '',
+    message: '',
+  });
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    
+    try {
+      const response = await fetch('http://localhost:8004/api/contacts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Contact ajouté:', data);
+        setFormData({ nom: '', email: '', message: '' });
+        toast.success('Votre message a été envoyé avec succès !');
+      } else {
+        const errorData = await response.json();
+        console.error('Erreur de soumission:', errorData);
+        toast.error('Erreur lors de l\'envoi du message');
+      }
+    } catch (error) {
+      console.error('Erreur de réseau:', error);
+      toast.error('Erreur de réseau, veuillez réessayer');
+    }
+  };
+
   return (
     <section id="contact" className="py-20 bg-white">
+      <ToastContainer />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <motion.h2
@@ -84,14 +132,18 @@ const Contact = () => {
             viewport={{ once: true }}
             className="bg-white p-8 rounded-3xl shadow-lg border border-gray-100"
           >
-            <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+            <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Nom complet</label>
                 <input
                   type="text"
                   id="name"
+                  name="nom"
+                  value={formData.nom}
+                  onChange={handleChange}
                   className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                   placeholder="Votre nom"
+                  required
                 />
               </div>
               <div>
@@ -99,17 +151,25 @@ const Contact = () => {
                 <input
                   type="email"
                   id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
                   className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                   placeholder="votre@email.com"
+                  required
                 />
               </div>
               <div>
                 <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">Message</label>
                 <textarea
                   id="message"
+                  name="message"
                   rows={4}
+                  value={formData.message}
+                  onChange={handleChange}
                   className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                   placeholder="Comment pouvons-nous vous aider ?"
+                  required
                 ></textarea>
               </div>
               <button

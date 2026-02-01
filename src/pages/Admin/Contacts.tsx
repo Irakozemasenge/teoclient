@@ -1,14 +1,50 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Mail, Trash2, Eye } from 'lucide-react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-const Contacts = () => {
-  const messages = [
-    { id: 1, nom: 'Alice M.', email: 'alice@example.com', message: 'Bonjour, je voudrais plus d\'infos sur...', date: '2026-01-28' },
-    { id: 2, nom: 'Bob D.', email: 'bob@example.com', message: 'Est-ce que vous faites des sites sur mesure ?', date: '2026-01-29' },
-  ];
+const Contacts: React.FC = () => {
+  const [messages, setMessages] = useState<any[]>([]);
+
+  // Fonction pour récupérer les messages
+  const fetchMessages = async () => {
+    try {
+      const response = await fetch('http://localhost:8004/api/contacts');
+      const data = await response.json();
+      setMessages(data);
+    } catch (error) {
+      console.error('Erreur lors de la récupération des contacts', error);
+      toast.error('Erreur lors de la récupération des messages');
+    }
+  };
+
+  // Appeler fetchMessages lors du premier rendu
+  useEffect(() => {
+    fetchMessages();
+  }, []);
+
+  // Fonction pour supprimer un message
+  const handleDelete = async (id: number) => {
+    try {
+      const response = await fetch(`http://localhost:8004/api/contacts/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        setMessages(messages.filter((msg) => msg.id !== id));
+        toast.success('Message supprimé avec succès !');
+      } else {
+        toast.error('Erreur lors de la suppression du message');
+      }
+    } catch (error) {
+      console.error('Erreur lors de la suppression du message', error);
+      toast.error('Erreur lors de la suppression du message');
+    }
+  };
 
   return (
     <div>
+      <ToastContainer />
       <h2 className="text-2xl font-bold text-gray-800 mb-6">Messages Reçus</h2>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -25,16 +61,16 @@ const Contacts = () => {
                     <p className="text-sm text-gray-500">{msg.email}</p>
                   </div>
                 </div>
-                <span className="text-xs text-gray-400">{msg.date}</span>
+                <span className="text-xs text-gray-400">Le {new Date(msg.createdAt).toLocaleDateString()}</span>
               </div>
               
               <p className="text-gray-600 mt-3 ml-13 pl-13">{msg.message}</p>
               
-              <div className="flex justify-end gap-3 mt-4">
-                <button className="text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1">
-                  <Eye size={16} /> Lire
-                </button>
-                <button className="text-sm text-red-500 hover:text-red-700 font-medium flex items-center gap-1">
+              <div className="flex justify-end gap-3 mt-4">                
+                <button
+                  className="text-sm text-red-500 hover:text-red-700 font-medium flex items-center gap-1"
+                  onClick={() => handleDelete(msg.id)} // Appel pour supprimer le message
+                >
                   <Trash2 size={16} /> Supprimer
                 </button>
               </div>

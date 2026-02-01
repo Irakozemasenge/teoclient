@@ -1,30 +1,42 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  LayoutDashboard, 
-  Users, 
-  GraduationCap, 
-  FileText, 
-  MessageSquare, 
-  LogOut, 
-  Menu, 
-  X 
+import {
+  LayoutDashboard,
+  Users,
+  GraduationCap,
+  FileText,
+  MessageSquare,
+  LogOut,
+  Menu,
+  X
 } from 'lucide-react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 const DashboardLayout: React.FC = () => {
-  const [isSidebarOpen, setSidebarOpen] = useState(true);
-  const [currentUser, setCurrentUser] = useState<string | null>(null);
+  const [isSidebarOpen, setSidebarOpen] = useState<boolean>(true);
+  const [admin, setAdmin] = useState<any>(null);
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Vérifiez si l'utilisateur est connecté
     const adminId = localStorage.getItem('adminId');
-    const adminName = localStorage.getItem('adminName'); // Ajoutez ceci si vous stockez le nom d'utilisateur
     if (!adminId) {
       navigate('/admin/login');
     } else {
-      setCurrentUser(adminName || 'Admin User'); // Affichez un nom par défaut si non trouvé.
+      // Fetch admin details
+      fetch(`http://localhost:8004/api/admin/getOne/${adminId}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          setAdmin(data); // Stocker les informations de l'administrateur
+        })
+        .catch(error => {
+          console.error('Fetch error:', error);
+          navigate('/admin/login'); // Rediriger en cas d'erreur
+        });
     }
   }, [navigate]);
 
@@ -37,13 +49,12 @@ const DashboardLayout: React.FC = () => {
   ];
 
   const handleLogout = () => {
-    localStorage.removeItem('adminId'); // Supprimez l'ID de l'utilisateur
-    localStorage.removeItem('adminName'); // Supprimez le nom de l'utilisateur
+    localStorage.removeItem('adminId');
     navigate('/admin/login');
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
+    <div className="min-h-screen bg-gray-100 flex flex-col lg:flex-row">
       {/* Sidebar */}
       <aside 
         className={`bg-blue-900 text-white fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 ease-in-out ${
@@ -97,19 +108,25 @@ const DashboardLayout: React.FC = () => {
           </button>
           
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold">
-                {currentUser?.charAt(0)} {/* Affiche la première lettre du nom */}
+            {admin && (
+              <div className="flex items-center gap-2">
+                <img
+                  src={`http://localhost:8004/uploads/Admin/${admin.photo}`} // Chemin de l'image
+                  alt={`${admin.firstname} ${admin.lastname}`}
+                  className="w-10 h-10 rounded-full"
+                />
+                <span className="text-gray-700 font-medium hidden sm:block">
+                  {`${admin.firstname} ${admin.lastname}`}
+                </span>
               </div>
-              <span className="text-gray-700 font-medium hidden sm:block">{currentUser}</span>
-            </div>
+            )}
           </div>
         </header>
 
         {/* Page Content */}
         <main className="flex-1 overflow-y-auto p-6 lg:p-8">
           <div className="max-w-7xl mx-auto">
-             <Outlet />
+            <Outlet />
           </div>
         </main>
       </div>
